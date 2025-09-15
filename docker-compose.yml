@@ -11,5 +11,15 @@ services:
     volumes:
       - data-postgres:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: [ "redis-server", "--appendonly", "yes" ]
+    ports:
+      - "6379:6379"
+    volumes:
+      - data-redis:/data
+
 volumes:
   data-postgres:
+  data-redis:
