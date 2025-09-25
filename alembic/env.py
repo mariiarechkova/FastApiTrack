@@ -6,9 +6,8 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 from app.core.config import settings
 from app.core.database import Base
-from app.organisation import models as organisation_models  # noqa: F401
+from app.organisations import models as organisation_models  # noqa: F401
 from app.users import models as user_models  # noqa: F401
-from app.voting import models as voting_models  # noqa: F401
 
 
 
