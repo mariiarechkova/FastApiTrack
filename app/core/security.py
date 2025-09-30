@@ -22,6 +22,7 @@ def create_access_token(user) -> str:
     payload = {
         "user_id": user.id,
         "email": user.email,
+        "organisation_id": user.organisation_id,
         "exp": expire,
         "iat": datetime.now(UTC),
     }

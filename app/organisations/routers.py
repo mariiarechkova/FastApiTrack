@@ -43,10 +43,7 @@ async def update_organisation(
     org_id: int = Path(..., gt=0),
     service: OrganisationService = Depends(get_organisation_service),
 ):
-    organisation = await service.update(org_id, data)
-    if not organisation:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Organisation not found")
-    return organisation
+    return await service.update(org_id, data)
 
 
 @router.delete(
@@ -57,10 +54,4 @@ async def delete_organisation(
     org_id: int = Path(..., gt=0),
     service: OrganisationService = Depends(get_organisation_service),
 ):
-    deleted = await service.delete(org_id)
-    if not deleted:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Organisation not found")
-    return None
-
-
-
+    return await service.delete(org_id)

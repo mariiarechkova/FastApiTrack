@@ -1,8 +1,8 @@
-
+from app.organisations.errors import OrganisationNotFoundError
 from app.organisations.repositories import OrganisationRepository
-from app.organisations.schemas import OrganisationRead, OrganisationAndUserCreate, OrganisationWithAdminRead
-from app.users.schemas import UserCreate, UserRead
-from app.users.services import UserService
+from app.organisations.schemas import OrganisationAndUserCreate, OrganisationWithAdminRead
+from app.users.schemas import UserRead
+from app.users.services.user_service import UserService
 
 
 class OrganisationService:
@@ -14,17 +14,16 @@ class OrganisationService:
         return await self._repo.get_all()
 
     async def get_by_id(self, org_id: int):
-        return await self._repo.get_by_id(org_id)
+        org = await self._repo.get_by_id(org_id)
+        if not org:
+            raise OrganisationNotFoundError(org_id)
+        return org
 
     async def create(self, data: OrganisationAndUserCreate):
         org = await self._repo.create(
             name=data.name,
         )
-        await self._repo.session.flush()
-
-        user_data = data.user.model_dump()
-        user_data["is_admin"] = True
-        user = await self._users.create_user(org_id=org.id, dto=UserCreate(**user_data))
+        user = await self._users.create_admin_user(org_id=org.id, dto=data.user)
         return OrganisationWithAdminRead(
             id=org.id,
             name=org.name,
@@ -33,10 +32,12 @@ class OrganisationService:
         )
 
     async def update(self, org_id, org_in):
-        return await self._repo.update(org_id, org_in)
+        org = await self._repo.update(org_id, org_in)
+        if not org:
+            raise OrganisationNotFoundError(org_id)
+        return org
 
     async def delete(self, org_id):
-        ok =  await self._repo.delete(org_id)
+        ok = await self._repo.delete(org_id)
         if not ok:
-            raise ValueError("Organisation not found")
-        return True
+            raise OrganisationNotFoundError(org_id)

@@ -8,7 +8,6 @@ class UserCreate(BaseModel):
     first_name: str = Field(..., max_length=100)
     last_name: str  = Field(..., max_length=100)
     password: str   = Field(..., min_length=6)
-    is_admin: bool = False
 
 
 class UserUpdate(BaseModel):
@@ -36,3 +35,8 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+class CurrentUser(BaseModel):
+    id: int
+    organisation_id: int
+    email: EmailStr | None = None

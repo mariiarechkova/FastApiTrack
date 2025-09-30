@@ -1,8 +1,8 @@
-from typing import Any
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.users.models import User
+from app.users.schemas import UserUpdate
 
 
 class UserRepository:
@@ -25,6 +25,10 @@ class UserRepository:
         result = await self.session.execute(select(User).where(User.email == email))
         return result.scalar_one_or_none()
 
+    async def is_admin(self, user_id: int) -> bool:
+        result = await self.session.execute(select(User.is_admin).where(User.id == user_id))
+        return bool(result.scalar())
+
     async def create_user(self, **kwargs) -> User:
         user = User(**kwargs)
         self.session.add(user)
@@ -32,15 +36,17 @@ class UserRepository:
         await self.session.refresh(user)
         return user
 
-    async def update_user(self, user_id: int, org_id: int, changes: dict[str, Any]) -> User | None:
+    async def update_user(self, user_id: int, org_id: int, changes: UserUpdate) -> User | None:
         res = await self.session.execute(
             select(User).where(User.id == user_id, User.organisation_id == org_id)
         )
         user = res.scalar_one_or_none()
         if user is None:
             return None
-        for k, v in changes.items():
-            setattr(user, k, v)
+
+        data = changes.model_dump(exclude_unset=True)
+        for key, value in data.items():
+            setattr(user, key, value)
 
         await self.session.flush()
         return user
@@ -49,4 +55,3 @@ class UserRepository:
         result = await self.session.execute(delete(User).where(User.id == user_id, User.organisation_id == org_id))
         await self.session.flush()
         return result.rowcount > 0
-
