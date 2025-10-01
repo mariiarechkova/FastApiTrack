@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
 from app.core.security import decode_access_token
-from app.organisations.reader import OrganisationQueryReader
+from app.organisations.services.query_service import OrganisationQueryReader
 from app.users.repositories import UserRepository
 from app.users.schemas import CurrentUser
 from app.users.services.auth_service import AuthService

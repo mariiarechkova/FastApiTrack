@@ -3,7 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
 from .repositories import OrganisationRepository
-from .services import OrganisationService
+from .services.organisation_services import OrganisationService
+
 from ..users.dependencies import get_user_service
 from ..users.services.user_service import UserService
 

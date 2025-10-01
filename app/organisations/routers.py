@@ -1,11 +1,9 @@
 
-from fastapi import APIRouter, Depends, Path, HTTPException
-from starlette import status
-
+from fastapi import APIRouter, Depends, Path, status
 from app.organisations import schemas
 from app.organisations.dependencies import get_organisation_service
-from app.organisations.schemas import OrganisationCreate, OrganisationAndUserCreate
-from app.organisations.services import OrganisationService
+from app.organisations.schemas import OrganisationAndUserCreate
+from app.organisations.services.organisation_services import OrganisationService
 
 router = APIRouter(prefix="/api/organisations", tags=["Organisations"])
 

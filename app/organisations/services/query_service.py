@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.organisations.repositories import OrganisationRepository
 
 
-class OrganisationQueryReader:
+class OrganisationQueryService:
     def __init__(self, session: AsyncSession):
         self.repo = OrganisationRepository(session)
 
