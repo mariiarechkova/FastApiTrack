@@ -28,7 +28,7 @@ class OrganisationService:
             id=org.id,
             name=org.name,
             created_at=org.created_at,
-            admin=UserRead.model_validate(user)
+            admin=UserRead.model_validate(user),
         )
 
     async def update(self, org_id, org_in):

@@ -11,7 +11,6 @@ class OrganisationRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-
     async def get_all(self) -> List[Organisation]:
         result = await self.session.execute(select(Organisation))
         return result.scalars().all()

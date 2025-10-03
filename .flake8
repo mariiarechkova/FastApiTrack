@@ -1,0 +1,17 @@
+[flake8]
+exclude =
+    .git,
+    .venv,
+    venv,
+    __pycache__,
+    .mypy_cache,
+    .pytest_cache,
+    .idea,
+    .vscode,
+    .ruff_cache,
+    alembic/versions
+
+max-line-length = 120
+
+per-file-ignores =
+    alembic/versions/*.py: E501,F401

@@ -9,8 +9,6 @@ from app.core.database import Base
 from app.organisations import models as organisation_models  # noqa: F401
 from app.users import models as user_models  # noqa: F401
 
-
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 # Alembic config
