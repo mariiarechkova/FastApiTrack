@@ -1,7 +1,8 @@
 from typing import List
 
 from sqlalchemy.exc import IntegrityError
-from app.core.exceptions import NotFoundError, EmailAlreadyExistsError
+
+from app.core.exceptions import EmailAlreadyExistsError, NotFoundError
 from app.core.security import hash_password
 from app.organisations.services.query_service import OrganisationQueryService
 from app.users.models import User
@@ -14,10 +15,10 @@ class UserService:
         self._repo = repo
         self.org_query = org_query
 
-    async def get_all_users(self, org_id: int)-> List[User]:
+    async def get_all_users(self, org_id: int) -> List[User]:
         return await self._repo.get_all(org_id=org_id)
 
-    async def get_user_by_id(self, user_id: int)-> User:
+    async def get_user_by_id(self, user_id: int) -> User:
         user = await self._repo.get_user_by_id(user_id)
         if not user:
             raise NotFoundError("User", user_id)
@@ -25,7 +26,7 @@ class UserService:
 
     async def create_user(self, org_id: int, dto: UserCreate) -> User:
         if not await self.org_query.exists_by_id(org_id):
-            raise NotFoundError('Organisation', org_id)
+            raise NotFoundError("Organisation", org_id)
 
         data = dto.model_dump()
         data["is_admin"] = False

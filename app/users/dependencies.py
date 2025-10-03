@@ -1,11 +1,11 @@
-from fastapi import HTTPException, status, Depends
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import ExpiredSignatureError, InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
 from app.core.security import decode_access_token
-from app.organisations.services.query_service import OrganisationQueryReader
+from app.organisations.services.query_service import OrganisationQueryService
 from app.users.repositories import UserRepository
 from app.users.schemas import CurrentUser
 from app.users.services.auth_service import AuthService
@@ -14,7 +14,7 @@ from app.users.services.user_service import UserService
 
 def get_user_service(session: AsyncSession = Depends(get_session)) -> UserService:
     repo = UserRepository(session)
-    org_reader = OrganisationQueryReader(session)
+    org_reader = OrganisationQueryService(session)
     return UserService(repo, org_reader)
 
 
@@ -30,6 +30,7 @@ UNAUTHORIZED = HTTPException(
     detail="Not authenticated",
     headers={"WWW-Authenticate": "Bearer"},
 )
+
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -54,7 +55,7 @@ async def get_current_user(
 
 async def require_admin_user(
     current_user: CurrentUser = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
 ) -> CurrentUser:
     repo = UserRepository(session)
     is_admin = await repo.is_admin(current_user.id)

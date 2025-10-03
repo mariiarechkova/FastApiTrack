@@ -1,4 +1,4 @@
-from app.core.security import verify_password, create_access_token
+from app.core.security import create_access_token, verify_password
 from app.users.repositories import UserRepository
 from app.users.schemas import Token
 

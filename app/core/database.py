@@ -5,7 +5,6 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.core.config import settings
 
-
 # Creating an asynchronous PostgreSQL engine
 engine = create_async_engine(settings.ASYNC_DATABASE_URL, echo=True)
 

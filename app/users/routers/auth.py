@@ -1,16 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.organisations.dependencies import get_organisation_service
-from app.organisations.services import OrganisationService
 from app.users import schemas
-from app.users.dependencies import get_auth_service, get_user_service, UNAUTHORIZED
+from app.users.dependencies import UNAUTHORIZED, get_auth_service, get_user_service
 from app.users.services.auth_service import AuthService
 from app.users.services.user_service import UserService
 
 #
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
-
 
 
 @router.post("/login", response_model=schemas.Token)

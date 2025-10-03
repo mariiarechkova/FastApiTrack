@@ -1,5 +1,5 @@
-
 from fastapi import APIRouter, Depends, Path, status
+
 from app.organisations import schemas
 from app.organisations.dependencies import get_organisation_service
 from app.organisations.schemas import OrganisationAndUserCreate
@@ -14,12 +14,14 @@ async def list_organisations(
 ):
     return await service.get_all()
 
+
 @router.get("/{org_id}", response_model=schemas.OrganisationRead)
 async def get_organisation(
     org_id: int = Path(..., gt=0),
     service: OrganisationService = Depends(get_organisation_service),
 ):
     return await service.get_by_id(org_id)
+
 
 @router.post(
     "/",
@@ -31,6 +33,7 @@ async def create_organisation(
     service: OrganisationService = Depends(get_organisation_service),
 ):
     return await service.create(data)
+
 
 @router.patch(
     "/{org_id}",

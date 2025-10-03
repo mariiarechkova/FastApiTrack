@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from pydantic import EmailStr, BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserCreate(BaseModel):
     email: EmailStr
     first_name: str = Field(..., max_length=100)
-    last_name: str  = Field(..., max_length=100)
-    password: str   = Field(..., min_length=6)
+    last_name: str = Field(..., max_length=100)
+    password: str = Field(..., min_length=6)
 
 
 class UserUpdate(BaseModel):
@@ -27,6 +27,7 @@ class UserRead(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
@@ -35,6 +36,7 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
 
 class CurrentUser(BaseModel):
     id: int

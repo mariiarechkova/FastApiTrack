@@ -1,4 +1,4 @@
-from sqlalchemy import select, delete
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.users.models import User
@@ -10,10 +10,7 @@ class UserRepository:
         self.session = session
 
     async def get_all(self, org_id: int):
-        stmt = (
-            select(User)
-            .where(User.organisation_id == org_id)
-        )
+        stmt = select(User).where(User.organisation_id == org_id)
         result = await self.session.execute(stmt)
         return result.scalars().all()
 
@@ -37,9 +34,7 @@ class UserRepository:
         return user
 
     async def update_user(self, user_id: int, org_id: int, changes: UserUpdate) -> User | None:
-        res = await self.session.execute(
-            select(User).where(User.id == user_id, User.organisation_id == org_id)
-        )
+        res = await self.session.execute(select(User).where(User.id == user_id, User.organisation_id == org_id))
         user = res.scalar_one_or_none()
         if user is None:
             return None
