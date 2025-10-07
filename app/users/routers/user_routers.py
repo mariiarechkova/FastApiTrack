@@ -36,7 +36,8 @@ async def create_user(
     service: UserService = Depends(get_user_service),
     admin_user: User = Depends(require_admin_user),
 ):
-    return await service.create_user(admin_user.organisation_id, dto)
+    user = await service.create_user(admin_user.organisation_id, dto)
+    return user
 
 
 @router.patch("/{user_id}", response_model=UserRead)

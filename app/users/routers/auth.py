@@ -27,4 +27,5 @@ async def register(
     user_service: UserService = Depends(get_user_service),
     org_id: int = Query(..., gt=0),
 ):
-    return await user_service.create_user(org_id, data)
+    user = await user_service.create_user(org_id, data)
+    return user
