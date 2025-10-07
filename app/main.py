@@ -21,7 +21,6 @@ app = FastAPI(title="My API", lifespan=lifespan)
 
 register_exception_handlers(app)
 
-
 app.include_router(organisation_router)
 app.include_router(user_router)
 app.include_router(auth_router)

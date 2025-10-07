@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from app.core.exceptions import EmailAlreadyExistsError, NotFoundError
 from app.core.security import hash_password
 from app.organisations.services.query_service import OrganisationQueryService
+from app.tasks.email import send_welcome_email
 from app.users.models import User
 from app.users.repositories import UserRepository
 from app.users.schemas import UserCreate, UserUpdate
@@ -24,12 +25,12 @@ class UserService:
             raise NotFoundError("User", user_id)
         return user
 
-    async def create_user(self, org_id: int, dto: UserCreate) -> User:
+    async def _create_user_common(self, org_id: int, dto: UserCreate, is_admin: bool) -> User:
         if not await self.org_query.exists_by_id(org_id):
             raise NotFoundError("Organisation", org_id)
 
         data = dto.model_dump()
-        data["is_admin"] = False
+        data["is_admin"] = is_admin
         data["hashed_password"] = hash_password(data.pop("password"))
         data["organisation_id"] = org_id
 
@@ -37,17 +38,16 @@ class UserService:
             return await self._repo.create_user(**data)
         except IntegrityError as e:
             raise EmailAlreadyExistsError(dto.email) from e
+
+    async def create_user(self, org_id, dto: UserCreate) -> User:
+        user = await self._create_user_common(org_id, dto, is_admin=False)
+        send_welcome_email.delay(to_email=user.email, user_name=user.first_name)
+        return user
 
     async def create_admin_user(self, org_id, dto: UserCreate) -> User:
-        data = dto.model_dump()
-        data["is_admin"] = True
-        data["hashed_password"] = hash_password(data.pop("password"))
-        data["organisation_id"] = org_id
-
-        try:
-            return await self._repo.create_user(**data)
-        except IntegrityError as e:
-            raise EmailAlreadyExistsError(dto.email) from e
+        user = await self._create_user_common(org_id, dto, is_admin=True)
+        send_welcome_email.delay(to_email=user.email, user_name=user.first_name)
+        return user
 
     async def update_user(self, user_id: int, org_id: int, dto: UserUpdate) -> User:
         try:
